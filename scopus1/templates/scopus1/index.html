@@ -1,0 +1,128 @@
+﻿{%extends 'scopus1/base_index.html'%}
+{%load static%}
+
+<!-- ------------------------------------------ header boligi ---------------------------------------------------------- -->
+{% block head %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  	<script src="{% static 'scopus1/jquery-3.4.1.min.js' %}"></script>
+	<link rel="stylesheet" href="{% static 'scopus1/main.css' %}">
+{% endblock %}
+
+
+<!-- ------------------------------------------ body boligi ----------------------------------------------------------- -->
+
+{% block content %}
+{%if paper%}
+<div class="container-fluid mt-5">
+  <div class="row ">
+      <div id='cssmenu' class="col-md-3 navi ">
+
+        <ul class="list-group " >
+
+
+
+            {%for p in staff%}
+                {% if forloop.first %}
+                    <li data-rel='1' class="list-group-item  active" >
+                        {{p}}
+                    </li>
+                {% else %}
+                    <li data-rel='{{forloop.counter}}' class="list-group-item " >
+                        {{p}}
+                    </li>
+                {% endif %}
+           {% endfor %}
+        </ul>
+      </div >
+      <div class="col-md-9 rounded" style="overflow:scroll; height: 550px;">
+          <h3 >Список научных трудов и изобретений</h3>
+
+      {% regroup paper by author_id as  persons %}
+
+          {% for person in persons %}
+                     <section >
+                            <button  class="btn btn-info " style="float: right" onclick="myFunction({{forloop.counter}})">Click me</button>
+                        <table class="table">
+                           <thead class="thead-inverse">
+                               <tr>
+                                   <th>#</th>
+                                   <th>Название трудов</th>
+                                   <th>Рукопись или печатные</th>
+                                   <th>Наименование издательства, журнала (№, год), № авторского свидетельства</th>
+                                   <th>Кол-во печатных листов или стр.</th>
+                                   <th>Фамилия соавторов работы</th>
+                               </tr>
+                           </thead>
+                           <tbody id="ty_{{forloop.counter}}">
+                {% for pa in person.list %}
+                   {%if pa.authors_id.id == person.id %}
+                     {% if pa.unread %}
+                           <tr >
+                     {% else %}
+                           <tr bgcolor="#c0c0c0" >
+                     {% endif %}
+                               <td> {{forloop.counter}}</td>
+                               <td>{{pa.title}}</td>
+                               <td>{{pa.p_type}}</td>
+                               <td>{{pa.description}}</td>
+                               <td>{{pa.num_pages}}</td>
+                               <td>{{pa.co_authors}}</td>
+                           </tr>
+
+
+                   {% endif %}
+                {% empty %}
+                            <li>Sorry, no athletes in this list.</li>
+                {% endfor %}
+                           </tbody>
+                        </table>
+
+                     </section>
+
+
+
+
+
+
+
+
+{% endfor %}
+      </div>
+  </div>
+</div>
+{% else %} <h4>Empty Database </h4>
+{% endif %}
+ {% endblock %}
+
+<!-- ------------------------------------------------------ JS boligi -------------------------------------------------- -->
+{% block javascript %}
+<script>
+  (function($) {
+    $('.navi li').click(function() {
+      $(this).addClass('active').siblings('li').removeClass('active');
+      $('section:nth-of-type('+$(this).data('rel')+')').stop().fadeIn(400, 'linear').siblings('section').stop().fadeOut(400, 'linear');
+
+    });
+  })(jQuery);
+
+
+
+function myFunction(pos) {
+   $('#ty_'+pos).css('background', '#c0c0c0');}
+
+
+$(document).ready(function(){
+  $("button").click(function(){
+    $.ajax({url: "/paper/", success: function(result){
+      alert("ajax call success.");
+    }});
+  });
+});
+
+
+
+
+</script>
+{% endblock %}
