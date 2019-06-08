@@ -3,7 +3,7 @@ from .models import  *
 
 
 def paper (request):
-    obj3=Paper.objects.all()
+    obj3 =Paper.objects.all()
     obj1 = Staff.objects.all()
     obj2 = P_type.objects.all()
     obj3=obj3.order_by('author_id')
