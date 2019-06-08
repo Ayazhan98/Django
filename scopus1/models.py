@@ -9,7 +9,7 @@ class Authors(models.Model):
     staff_member = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.f_name+self.l_name
+        return self.f_name+" "+self.l_name
 
 
 class P_type(models.Model):
@@ -33,4 +33,3 @@ class Paper(models.Model):
 class Authored(models.Model):
     p_title = models.ForeignKey(Paper, on_delete=models.CASCADE, blank=False)
     author = models.ForeignKey(Authors, on_delete=models.CASCADE, blank=False)
-
